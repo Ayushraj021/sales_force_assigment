@@ -5,6 +5,7 @@ from uuid import UUID
 
 import strawberry
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from strawberry.types import Info
 
 from app.api.graphql.context import get_db_session, get_current_user_from_context
@@ -146,7 +147,17 @@ class ModelQuery:
         db = await get_db_session(info)
         await get_current_user_from_context(info, db)
 
-        result = await db.execute(select(Model).where(Model.id == id))
+        query = (
+            select(Model)
+            .options(
+                selectinload(Model.versions),
+                selectinload(Model.parameters),
+                selectinload(Model.adstock_configs),
+                selectinload(Model.saturation_configs),
+            )
+            .where(Model.id == id)
+        )
+        result = await db.execute(query)
         model = result.scalar_one_or_none()
 
         if not model:
@@ -167,7 +178,16 @@ class ModelQuery:
         db = await get_db_session(info)
         current_user = await get_current_user_from_context(info, db)
 
-        query = select(Model).where(Model.organization_id == current_user.organization_id)
+        query = (
+            select(Model)
+            .options(
+                selectinload(Model.versions),
+                selectinload(Model.parameters),
+                selectinload(Model.adstock_configs),
+                selectinload(Model.saturation_configs),
+            )
+            .where(Model.organization_id == current_user.organization_id)
+        )
 
         if model_type:
             query = query.where(Model.model_type == model_type)
@@ -186,7 +206,12 @@ class ModelQuery:
         db = await get_db_session(info)
         await get_current_user_from_context(info, db)
 
-        result = await db.execute(select(Experiment).where(Experiment.id == id))
+        query = (
+            select(Experiment)
+            .options(selectinload(Experiment.runs))
+            .where(Experiment.id == id)
+        )
+        result = await db.execute(query)
         experiment = result.scalar_one_or_none()
 
         if not experiment:
@@ -206,8 +231,10 @@ class ModelQuery:
         db = await get_db_session(info)
         current_user = await get_current_user_from_context(info, db)
 
-        query = select(Experiment).where(
-            Experiment.organization_id == current_user.organization_id
+        query = (
+            select(Experiment)
+            .options(selectinload(Experiment.runs))
+            .where(Experiment.organization_id == current_user.organization_id)
         )
 
         if status:

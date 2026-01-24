@@ -4,7 +4,7 @@ import pytest
 from datetime import datetime, timedelta
 
 from app.core.security.jwt import create_access_token, decode_token, TokenData
-from app.core.security.password import get_password_hash, verify_password
+from app.core.security.password import get_password_hash_sync as get_password_hash, verify_password_sync as verify_password
 
 
 class TestPasswordHashing:

@@ -18,6 +18,7 @@ interface AuthState {
   user: User | null
   accessToken: string | null
   refreshToken: string | null
+  tokenExpiresAt: number | null // Unix timestamp in milliseconds
   isAuthenticated: boolean
   isLoading: boolean
   error: string | null
@@ -32,6 +33,10 @@ interface AuthActions {
   register: (email: string, password: string, firstName?: string, lastName?: string) => Promise<void>
   logout: () => void
   refreshAccessToken: () => Promise<void>
+  forgotPassword: (email: string) => Promise<void>
+  resetPassword: (token: string, newPassword: string) => Promise<void>
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>
+  updateProfile: (data: { firstName?: string; lastName?: string; email?: string }) => Promise<void>
 }
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
@@ -42,6 +47,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       user: null,
       accessToken: null,
       refreshToken: null,
+      tokenExpiresAt: null,
       isAuthenticated: false,
       isLoading: false,
       error: null,
@@ -97,6 +103,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           }
 
           const { token, user } = data.data.login
+          // Calculate token expiration time (expiresIn is in seconds)
+          const tokenExpiresAt = Date.now() + (token.expiresIn * 1000)
           set({
             user: {
               ...user,
@@ -104,6 +112,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             },
             accessToken: token.accessToken,
             refreshToken: token.refreshToken,
+            tokenExpiresAt,
             isAuthenticated: true,
             isLoading: false,
           })
@@ -162,6 +171,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           }
 
           const { token, user } = data.data.register
+          // Calculate token expiration time (expiresIn is in seconds)
+          const tokenExpiresAt = Date.now() + (token.expiresIn * 1000)
           set({
             user: {
               ...user,
@@ -169,6 +180,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             },
             accessToken: token.accessToken,
             refreshToken: token.refreshToken,
+            tokenExpiresAt,
             isAuthenticated: true,
             isLoading: false,
           })
@@ -186,6 +198,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           user: null,
           accessToken: null,
           refreshToken: null,
+          tokenExpiresAt: null,
           isAuthenticated: false,
           error: null,
         })
@@ -224,13 +237,188 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           }
 
           const tokens = data.data.refreshToken
+          // Calculate token expiration time (expiresIn is in seconds)
+          const tokenExpiresAt = Date.now() + (tokens.expiresIn * 1000)
           set({
             accessToken: tokens.accessToken,
             refreshToken: tokens.refreshToken,
+            tokenExpiresAt,
           })
         } catch (error) {
           // If refresh fails, logout
           get().logout()
+          throw error
+        }
+      },
+
+      forgotPassword: async (email) => {
+        set({ isLoading: true, error: null })
+        try {
+          const response = await fetch(`${API_URL}/api/graphql`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              query: `
+                mutation ForgotPassword($email: String!) {
+                  forgotPassword(email: $email) {
+                    success
+                    message
+                  }
+                }
+              `,
+              variables: { email },
+            }),
+          })
+
+          const data = await response.json()
+
+          if (data.errors) {
+            throw new Error(data.errors[0].message)
+          }
+
+          set({ isLoading: false })
+        } catch (error) {
+          set({
+            error: error instanceof Error ? error.message : 'Failed to send reset email',
+            isLoading: false,
+          })
+          throw error
+        }
+      },
+
+      resetPassword: async (token, newPassword) => {
+        set({ isLoading: true, error: null })
+        try {
+          const response = await fetch(`${API_URL}/api/graphql`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              query: `
+                mutation ResetPassword($token: String!, $newPassword: String!) {
+                  resetPassword(token: $token, newPassword: $newPassword) {
+                    success
+                    message
+                  }
+                }
+              `,
+              variables: { token, newPassword },
+            }),
+          })
+
+          const data = await response.json()
+
+          if (data.errors) {
+            throw new Error(data.errors[0].message)
+          }
+
+          set({ isLoading: false })
+        } catch (error) {
+          set({
+            error: error instanceof Error ? error.message : 'Failed to reset password',
+            isLoading: false,
+          })
+          throw error
+        }
+      },
+
+      changePassword: async (currentPassword, newPassword) => {
+        const { accessToken } = get()
+        set({ isLoading: true, error: null })
+        try {
+          const response = await fetch(`${API_URL}/api/graphql`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify({
+              query: `
+                mutation ChangePassword($input: ChangePasswordInput!) {
+                  changePassword(input: $input) {
+                    success
+                    message
+                  }
+                }
+              `,
+              variables: {
+                input: { currentPassword, newPassword },
+              },
+            }),
+          })
+
+          const data = await response.json()
+
+          if (data.errors) {
+            throw new Error(data.errors[0].message)
+          }
+
+          set({ isLoading: false })
+        } catch (error) {
+          set({
+            error: error instanceof Error ? error.message : 'Failed to change password',
+            isLoading: false,
+          })
+          throw error
+        }
+      },
+
+      updateProfile: async (profileData) => {
+        const { accessToken } = get()
+        set({ isLoading: true, error: null })
+        try {
+          const response = await fetch(`${API_URL}/api/graphql`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify({
+              query: `
+                mutation UpdateProfile($input: UpdateProfileInput!) {
+                  updateProfile(input: $input) {
+                    id
+                    email
+                    firstName
+                    lastName
+                    fullName
+                    isActive
+                    isVerified
+                    isSuperuser
+                    roles {
+                      name
+                    }
+                  }
+                }
+              `,
+              variables: {
+                input: profileData,
+              },
+            }),
+          })
+
+          const data = await response.json()
+
+          if (data.errors) {
+            throw new Error(data.errors[0].message)
+          }
+
+          const user = data.data.updateProfile
+          set({
+            user: {
+              ...user,
+              roles: user.roles.map((r: { name: string }) => r.name),
+            },
+            isLoading: false,
+          })
+        } catch (error) {
+          set({
+            error: error instanceof Error ? error.message : 'Failed to update profile',
+            isLoading: false,
+          })
           throw error
         }
       },
@@ -241,6 +429,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         user: state.user,
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
+        tokenExpiresAt: state.tokenExpiresAt,
         isAuthenticated: state.isAuthenticated,
       }),
     }

@@ -71,7 +71,7 @@ class Dataset(Base, UUIDMixin, TimestampMixin):
 
     # Tags and metadata
     tags: Mapped[list] = mapped_column(JSONB, default=list)
-    metadata: Mapped[dict] = mapped_column(JSONB, default=dict)
+    extra_metadata: Mapped[dict] = mapped_column(JSONB, default=dict)  # renamed from 'metadata' (reserved)
 
     # Storage
     storage_path: Mapped[str | None] = mapped_column(String(500))

@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sales-forecasting
+  labels:
+    name: sales-forecasting
+    environment: production
+    app.kubernetes.io/name: sales-forecasting
+    app.kubernetes.io/part-of: mlops-platform
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sales-forecasting-staging
+  labels:
+    name: sales-forecasting-staging
+    environment: staging
+    app.kubernetes.io/name: sales-forecasting
+    app.kubernetes.io/part-of: mlops-platform
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: sales-forecasting-quota
+  namespace: sales-forecasting
+spec:
+  hard:
+    requests.cpu: "20"
+    requests.memory: "40Gi"
+    limits.cpu: "40"
+    limits.memory: "80Gi"
+    pods: "50"
+    services: "10"
+    secrets: "20"
+    configmaps: "20"
+    persistentvolumeclaims: "10"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: sales-forecasting-limits
+  namespace: sales-forecasting
+spec:
+  limits:
+    - default:
+        cpu: "1000m"
+        memory: "2Gi"
+      defaultRequest:
+        cpu: "100m"
+        memory: "256Mi"
+      max:
+        cpu: "8000m"
+        memory: "16Gi"
+      min:
+        cpu: "50m"
+        memory: "64Mi"
+      type: Container

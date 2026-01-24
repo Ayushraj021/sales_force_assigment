@@ -33,6 +33,7 @@ from app.infrastructure.database.models.report import (
     ScheduledReport,
     Widget,
 )
+from app.infrastructure.database.models.forecast import Forecast
 from app.infrastructure.database.models.user import Permission, Role, User
 
 __all__ = [
@@ -71,4 +72,6 @@ __all__ = [
     "Report",
     "ScheduledReport",
     "Export",
+    # Forecasts
+    "Forecast",
 ]

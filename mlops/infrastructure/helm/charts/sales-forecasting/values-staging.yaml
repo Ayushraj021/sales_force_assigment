@@ -1,0 +1,67 @@
+# Staging environment values
+
+global:
+  environment: staging
+
+replicaCount: 2
+
+image:
+  tag: "staging"
+
+ingress:
+  hosts:
+    - host: sales-forecasting-staging.company.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: sales-forecasting-staging-tls
+      hosts:
+        - sales-forecasting-staging.company.com
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 80
+
+env:
+  - name: ENVIRONMENT
+    value: "staging"
+  - name: DEBUG
+    value: "true"
+  - name: LOG_LEVEL
+    value: "DEBUG"
+
+externalDatabase:
+  host: postgres-staging
+  database: sales_forecasting_staging
+
+externalRedis:
+  host: redis-staging
+
+celeryWorker:
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+
+podDisruptionBudget:
+  enabled: false
+
+serviceMonitor:
+  enabled: true
+  labels:
+    release: prometheus-staging

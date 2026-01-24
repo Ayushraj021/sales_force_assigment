@@ -89,6 +89,8 @@ def upgrade() -> None:
         sa.Column('is_superuser', sa.Boolean, default=False),
         sa.Column('is_verified', sa.Boolean, default=False),
         sa.Column('last_login', sa.DateTime(timezone=True), nullable=True),
+        sa.Column('password_reset_token', sa.String(255), nullable=True),
+        sa.Column('password_reset_expires', sa.DateTime(timezone=True), nullable=True),
         sa.Column('organization_id', postgresql.UUID(as_uuid=True),
                   sa.ForeignKey('organizations.id'), nullable=True),
         sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now()),
@@ -542,10 +544,10 @@ def upgrade() -> None:
         sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.func.now()),
     )
 
-    # Audit Logs table (will be a hypertable)
+    # Audit Logs table (will be a hypertable - requires composite primary key)
     op.create_table(
         'audit_logs',
-        sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True),
+        sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column('timestamp', sa.DateTime(timezone=True), nullable=False, index=True),
         sa.Column('user_id', postgresql.UUID(as_uuid=True),
                   sa.ForeignKey('users.id'), nullable=True, index=True),
@@ -561,12 +563,18 @@ def upgrade() -> None:
         sa.Column('request_id', sa.String(100), nullable=True),
         sa.Column('status', sa.String(20), default='success'),
         sa.Column('error_message', sa.Text, nullable=True),
+        sa.PrimaryKeyConstraint('id', 'timestamp'),
     )
 
-    # Convert audit_logs to TimescaleDB hypertable
-    op.execute(
-        "SELECT create_hypertable('audit_logs', 'timestamp', if_not_exists => TRUE)"
-    )
+    # Convert audit_logs to TimescaleDB hypertable (optional - skip if TimescaleDB not installed)
+    op.execute("""
+        DO $$
+        BEGIN
+            IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'timescaledb') THEN
+                PERFORM create_hypertable('audit_logs', 'timestamp', if_not_exists => TRUE);
+            END IF;
+        END $$;
+    """)
 
     # Insert default roles
     op.execute("""

@@ -24,7 +24,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship
 
-from .base import Base
+from app.infrastructure.database.session import Base
 
 
 class GeoExperimentStatus(str, PyEnum):
@@ -258,7 +258,7 @@ class ConsentRecord(Base):
     user_agent = Column(Text)
 
     # Additional data
-    metadata = Column(JSONB)
+    consent_metadata = Column(JSONB)
 
     # Relationships
     organization_id = Column(UUID(as_uuid=True), ForeignKey("organizations.id"))

@@ -34,6 +34,9 @@ class ChannelType:
     click_column: Optional[str]
     default_adstock_type: str
     default_saturation_type: str
+    dataset_id: UUID
+    created_at: datetime
+    updated_at: datetime
 
 
 @strawberry.type
@@ -48,6 +51,9 @@ class MetricType:
     column_name: str
     aggregation_method: str
     is_target: bool
+    dataset_id: UUID
+    created_at: datetime
+    updated_at: datetime
 
 
 @strawberry.type
@@ -88,21 +94,112 @@ class CreateDatasetInput:
 class CreateChannelInput:
     """Input for defining a marketing channel."""
 
+    dataset_id: UUID
     name: str
     display_name: Optional[str] = None
+    description: Optional[str] = None
     channel_type: str  # paid, organic, owned
     spend_column: Optional[str] = None
     impression_column: Optional[str] = None
     click_column: Optional[str] = None
+    default_adstock_type: str = "geometric"
+    default_saturation_type: str = "hill"
+
+
+@strawberry.input
+class UpdateChannelInput:
+    """Input for updating a channel."""
+
+    name: Optional[str] = None
+    display_name: Optional[str] = None
+    description: Optional[str] = None
+    channel_type: Optional[str] = None
+    spend_column: Optional[str] = None
+    impression_column: Optional[str] = None
+    click_column: Optional[str] = None
+    default_adstock_type: Optional[str] = None
+    default_saturation_type: Optional[str] = None
 
 
 @strawberry.input
 class CreateMetricInput:
     """Input for defining a metric."""
 
+    dataset_id: UUID
     name: str
     display_name: Optional[str] = None
+    description: Optional[str] = None
     metric_type: str  # revenue, conversions, leads
     column_name: str
     aggregation_method: str = "sum"
     is_target: bool = False
+
+
+@strawberry.input
+class UpdateMetricInput:
+    """Input for updating a metric."""
+
+    name: Optional[str] = None
+    display_name: Optional[str] = None
+    description: Optional[str] = None
+    metric_type: Optional[str] = None
+    column_name: Optional[str] = None
+    aggregation_method: Optional[str] = None
+    is_target: Optional[bool] = None
+
+
+@strawberry.input
+class ChannelFilterInput:
+    """Input for filtering channels."""
+
+    dataset_id: Optional[UUID] = None
+    channel_type: Optional[str] = None
+
+
+@strawberry.input
+class MetricFilterInput:
+    """Input for filtering metrics."""
+
+    dataset_id: Optional[UUID] = None
+    metric_type: Optional[str] = None
+    is_target: Optional[bool] = None
+
+
+@strawberry.input
+class CreateDataConnectorInput:
+    """Input for creating a data connector."""
+
+    name: str
+    description: Optional[str] = None
+    source_type: str  # google_ads, meta_ads, bigquery, snowflake, etc.
+    connection_config: strawberry.scalars.JSON
+
+
+@strawberry.input
+class UpdateDataConnectorInput:
+    """Input for updating a data connector."""
+
+    name: Optional[str] = None
+    description: Optional[str] = None
+    connection_config: Optional[strawberry.scalars.JSON] = None
+    is_active: Optional[bool] = None
+
+
+@strawberry.type
+class ConnectionTestResult:
+    """Result of testing a data connector connection."""
+
+    success: bool
+    message: str
+    details: Optional[strawberry.scalars.JSON] = None
+
+
+@strawberry.type
+class SyncResult:
+    """Result of syncing data from a connector."""
+
+    success: bool
+    message: str
+    records_synced: Optional[int] = None
+    sync_started_at: Optional[datetime] = None
+    sync_completed_at: Optional[datetime] = None

@@ -37,6 +37,8 @@ class RoleType:
     description: Optional[str]
     is_default: bool
     permissions: list[PermissionType]
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 @strawberry.type
@@ -115,3 +117,26 @@ class ChangePasswordInput:
 
     current_password: str
     new_password: str
+
+
+@strawberry.input
+class ForgotPasswordInput:
+    """Input for requesting password reset."""
+
+    email: str
+
+
+@strawberry.input
+class ResetPasswordInput:
+    """Input for resetting password with token."""
+
+    token: str
+    new_password: str
+
+
+@strawberry.type
+class PasswordResetResult:
+    """Result of password reset operations."""
+
+    success: bool
+    message: str

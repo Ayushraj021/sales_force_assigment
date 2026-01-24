@@ -1,7 +1,9 @@
 """Redis client for caching and message broker."""
 
+from __future__ import annotations
+
 import json
-from typing import Any
+from typing import Any, Set
 
 import redis.asyncio as redis
 import structlog
@@ -130,7 +132,7 @@ class RedisClient:
         """Add members to a set."""
         return await self.client.sadd(key, *values)
 
-    async def smembers(self, key: str) -> set[str]:
+    async def smembers(self, key: str) -> Set[str]:
         """Get all members of a set."""
         return await self.client.smembers(key)
 

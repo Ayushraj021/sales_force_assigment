@@ -1,9 +1,8 @@
 """Application configuration using Pydantic Settings."""
 
 from functools import lru_cache
-from typing import Any
 
-from pydantic import PostgresDsn, RedisDsn, field_validator, model_validator
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -72,6 +71,43 @@ class Settings(BaseSettings):
 
     # DVC
     DVC_REMOTE_URL: str | None = None
+    DVC_REMOTE_NAME: str = "minio"
+
+    # Apache Airflow
+    AIRFLOW_BASE_URL: str = "http://localhost:8080"
+    AIRFLOW_API_URL: str = "http://localhost:8080/api/v1"
+    AIRFLOW_USERNAME: str = "admin"
+    AIRFLOW_PASSWORD: str = "admin"
+
+    # Feast Feature Store
+    FEAST_REPO_PATH: str = "/app/feast_repo"
+    FEAST_SERVER_URL: str = "http://localhost:6566"
+    FEAST_ONLINE_STORE_TYPE: str = "redis"
+    FEAST_OFFLINE_STORE_TYPE: str = "postgres"
+
+    # Prometheus Monitoring
+    PROMETHEUS_URL: str = "http://localhost:9090"
+    PROMETHEUS_PUSHGATEWAY_URL: str | None = None
+    METRICS_EXPORTER_PORT: int = 8001
+
+    # Grafana
+    GRAFANA_URL: str = "http://localhost:3001"
+    GRAFANA_API_KEY: str | None = None
+
+    # Alertmanager
+    ALERTMANAGER_URL: str = "http://localhost:9093"
+
+    # Quality Gates Configuration
+    QUALITY_GATE_MAPE_IMPROVEMENT: float = 2.0  # Percentage improvement required
+    QUALITY_GATE_MAX_MAPE: float = 0.15  # Maximum absolute MAPE threshold
+    QUALITY_GATE_DRIFT_P_VALUE: float = 0.05  # Drift detection threshold
+    QUALITY_GATE_MAX_LATENCY_MS: float = 500.0  # P99 latency threshold
+    QUALITY_GATE_MIN_GE_SUCCESS: float = 0.95  # Great Expectations success rate
+
+    # Model Registry
+    MODEL_REGISTRY_STAGE_STAGING: str = "Staging"
+    MODEL_REGISTRY_STAGE_PRODUCTION: str = "Production"
+    MODEL_REGISTRY_STAGE_ARCHIVED: str = "Archived"
 
     # Logging
     LOG_LEVEL: str = "INFO"
@@ -80,6 +116,9 @@ class Settings(BaseSettings):
     # Rate Limiting
     RATE_LIMIT_REQUESTS: int = 100
     RATE_LIMIT_PERIOD: int = 60
+
+    # Data Storage
+    DATA_UPLOAD_DIR: str = "/tmp/sales_forecasting/uploads"
 
     @model_validator(mode="after")
     def assemble_db_url(self) -> "Settings":

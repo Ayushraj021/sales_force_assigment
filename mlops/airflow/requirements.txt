@@ -1,0 +1,39 @@
+# Airflow providers and dependencies
+apache-airflow-providers-celery==3.5.1
+apache-airflow-providers-postgres==5.9.0
+apache-airflow-providers-redis==3.5.0
+apache-airflow-providers-http==4.8.0
+apache-airflow-providers-cncf-kubernetes==7.11.0
+
+# MLOps tools
+mlflow>=2.10.0
+feast>=0.35.0
+great-expectations>=0.18.8
+dvc[s3]>=3.38.1
+
+# Data processing
+pandas>=2.1.4
+numpy>=1.26.3
+scikit-learn>=1.4.0
+
+# Database
+psycopg2-binary>=2.9.9
+asyncpg>=0.29.0
+sqlalchemy>=2.0.25
+redis>=5.0.1
+
+# HTTP & API
+httpx>=0.26.0
+requests>=2.31.0
+
+# AWS/S3
+boto3>=1.34.25
+
+# Kubernetes
+kubernetes>=28.1.0
+
+# Utilities
+pydantic>=2.5.3
+structlog>=24.1.0
+tenacity>=8.2.3
+python-dateutil>=2.8.2

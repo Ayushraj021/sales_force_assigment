@@ -170,3 +170,56 @@ class CreateExperimentInput:
     name: str
     description: Optional[str] = None
     config: Optional[JSON] = None
+
+
+@strawberry.type
+class ForecastType:
+    """Forecast result type."""
+
+    id: UUID
+    name: str
+    description: Optional[str]
+    status: str
+    model_type: str
+    target_metric: str
+    horizon: int
+    confidence_level: float
+    start_date: Optional[str]
+    end_date: Optional[str]
+    forecast_start_date: Optional[str]
+    forecast_end_date: Optional[str]
+    predicted_values: JSON
+    lower_bounds: JSON
+    upper_bounds: JSON
+    forecast_dates: JSON
+    model_params: JSON
+    metrics: JSON
+    error_message: Optional[str]
+    is_active: bool
+    dataset_id: Optional[UUID]
+    model_id: Optional[UUID]
+    created_at: datetime
+    updated_at: datetime
+
+
+@strawberry.input
+class CreateForecastInput:
+    """Input for creating a forecast."""
+
+    name: str
+    description: Optional[str] = None
+    model_type: str  # prophet, arima, ensemble, neural
+    target_metric: str
+    dataset_id: UUID
+    horizon: int = 30
+    confidence_level: float = 0.95
+    model_params: Optional[JSON] = None
+
+
+@strawberry.input
+class UpdateForecastInput:
+    """Input for updating a forecast."""
+
+    name: Optional[str] = None
+    description: Optional[str] = None
+    is_active: Optional[bool] = None

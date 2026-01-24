@@ -1,0 +1,169 @@
+{
+  "expectation_suite_name": "sales_data_suite",
+  "data_asset_type": "Dataset",
+  "meta": {
+    "great_expectations_version": "0.18.8"
+  },
+  "expectations": [
+    {
+      "expectation_type": "expect_table_columns_to_match_ordered_list",
+      "kwargs": {
+        "column_list": [
+          "date",
+          "revenue",
+          "units_sold",
+          "transactions",
+          "average_order_value"
+        ]
+      },
+      "meta": {
+        "notes": "Ensure required columns exist in expected order"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "date"
+      },
+      "meta": {
+        "notes": "Date should never be null"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "revenue"
+      },
+      "meta": {
+        "notes": "Revenue should never be null"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "date",
+        "type_": "datetime64"
+      },
+      "meta": {
+        "notes": "Date should be datetime type"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "revenue",
+        "type_": "float64"
+      },
+      "meta": {
+        "notes": "Revenue should be numeric"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "revenue",
+        "min_value": 0,
+        "max_value": 10000000
+      },
+      "meta": {
+        "notes": "Revenue should be between 0 and 10M"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "units_sold",
+        "min_value": 0,
+        "max_value": 1000000
+      },
+      "meta": {
+        "notes": "Units sold should be non-negative"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "transactions",
+        "min_value": 0,
+        "max_value": 500000
+      },
+      "meta": {
+        "notes": "Transactions should be non-negative"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "average_order_value",
+        "min_value": 0,
+        "max_value": 50000
+      },
+      "meta": {
+        "notes": "AOV should be reasonable"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_unique",
+      "kwargs": {
+        "column": "date"
+      },
+      "meta": {
+        "notes": "Each date should appear only once (daily aggregation)"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "date",
+        "regex": "^\\d{4}-\\d{2}-\\d{2}"
+      },
+      "meta": {
+        "notes": "Date format validation when stored as string"
+      }
+    },
+    {
+      "expectation_type": "expect_table_row_count_to_be_between",
+      "kwargs": {
+        "min_value": 365,
+        "max_value": 3650
+      },
+      "meta": {
+        "notes": "Expect at least 1 year of data, max 10 years"
+      }
+    },
+    {
+      "expectation_type": "expect_column_proportion_of_unique_values_to_be_between",
+      "kwargs": {
+        "column": "revenue",
+        "min_value": 0.8,
+        "max_value": 1.0
+      },
+      "meta": {
+        "notes": "Revenue values should be mostly unique (not constant)"
+      }
+    },
+    {
+      "expectation_type": "expect_column_mean_to_be_between",
+      "kwargs": {
+        "column": "revenue",
+        "min_value": 1000,
+        "max_value": 5000000
+      },
+      "meta": {
+        "notes": "Average revenue sanity check"
+      }
+    },
+    {
+      "expectation_type": "expect_column_stdev_to_be_between",
+      "kwargs": {
+        "column": "revenue",
+        "min_value": 100,
+        "max_value": 2000000
+      },
+      "meta": {
+        "notes": "Revenue should have some variance (not constant)"
+      }
+    }
+  ],
+  "ge_cloud_id": null
+}

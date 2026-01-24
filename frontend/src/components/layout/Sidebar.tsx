@@ -25,6 +25,13 @@ import {
   Beaker,
   Target,
   Sparkles,
+  Activity,
+  Workflow,
+  Package,
+  Clock,
+  History,
+  Shield,
+  FileSearch,
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -56,6 +63,20 @@ const navigationItems: NavItem[] = [
     label: 'Data Management',
     icon: <Database className="h-5 w-5" />,
     href: '/data',
+    children: [
+      {
+        id: 'data-profiling',
+        label: 'Data Profiling',
+        icon: <FileSearch className="h-4 w-4" />,
+        href: '/data/profiling',
+      },
+      {
+        id: 'data-versions',
+        label: 'Data Versions',
+        icon: <History className="h-4 w-4" />,
+        href: '/data/versions',
+      },
+    ],
   },
   {
     id: 'models',
@@ -84,11 +105,17 @@ const navigationItems: NavItem[] = [
     ],
   },
   {
+    id: 'registry',
+    label: 'Model Registry',
+    icon: <Package className="h-5 w-5" />,
+    href: '/registry',
+    badge: 'New',
+  },
+  {
     id: 'experiments',
     label: 'Experiments',
     icon: <Beaker className="h-5 w-5" />,
     href: '/experiments',
-    badge: 'New',
   },
   {
     id: 'forecasting',
@@ -110,6 +137,24 @@ const navigationItems: NavItem[] = [
     badge: 'Beta',
   },
   {
+    id: 'etl',
+    label: 'ETL Pipelines',
+    icon: <Workflow className="h-5 w-5" />,
+    href: '/etl',
+  },
+  {
+    id: 'scheduler',
+    label: 'Job Scheduler',
+    icon: <Clock className="h-5 w-5" />,
+    href: '/scheduler',
+  },
+  {
+    id: 'monitoring',
+    label: 'Monitoring',
+    icon: <Activity className="h-5 w-5" />,
+    href: '/monitoring',
+  },
+  {
     id: 'reports',
     label: 'Reports',
     icon: <FileText className="h-5 w-5" />,
@@ -118,6 +163,12 @@ const navigationItems: NavItem[] = [
 ];
 
 const bottomItems: NavItem[] = [
+  {
+    id: 'privacy',
+    label: 'Privacy & Consent',
+    icon: <Shield className="h-5 w-5" />,
+    href: '/privacy',
+  },
   {
     id: 'settings',
     label: 'Settings',

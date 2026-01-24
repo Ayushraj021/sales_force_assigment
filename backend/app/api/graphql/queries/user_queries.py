@@ -5,6 +5,7 @@ from uuid import UUID
 
 import strawberry
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from strawberry.types import Info
 
 from app.api.graphql.context import get_db_session, get_current_user_from_context
@@ -12,7 +13,7 @@ from app.api.graphql.mutations.auth_mutations import user_to_graphql
 from app.api.graphql.types.auth import UserType, OrganizationType
 from app.core.exceptions import NotFoundError
 from app.infrastructure.database.models.organization import Organization
-from app.infrastructure.database.models.user import User
+from app.infrastructure.database.models.user import User, Role
 
 
 @strawberry.type
@@ -32,7 +33,14 @@ class UserQuery:
         db = await get_db_session(info)
         await get_current_user_from_context(info, db)  # Auth check
 
-        result = await db.execute(select(User).where(User.id == id))
+        result = await db.execute(
+            select(User)
+            .where(User.id == id)
+            .options(
+                selectinload(User.organization),
+                selectinload(User.roles).selectinload(Role.permissions),
+            )
+        )
         user = result.scalar_one_or_none()
 
         if not user:
@@ -52,7 +60,10 @@ class UserQuery:
         current_user = await get_current_user_from_context(info, db)
 
         # Only show users from same organization
-        query = select(User)
+        query = select(User).options(
+            selectinload(User.organization),
+            selectinload(User.roles).selectinload(Role.permissions),
+        )
         if current_user.organization_id:
             query = query.where(User.organization_id == current_user.organization_id)
 

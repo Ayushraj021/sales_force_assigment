@@ -10,12 +10,15 @@ from fastapi.responses import JSONResponse
 from strawberry.fastapi import GraphQLRouter
 
 from app.api.graphql.schema import schema
+from app.api.graphql.context import get_context
 from app.api.rest import health, upload
 from app.config import settings
 from app.core.exceptions import AppException
 from app.core.observability import configure_logging
 from app.infrastructure.cache.redis import RedisClient
 from app.infrastructure.database.session import engine
+from app.mcp.config import get_mcp_settings
+from app.mcp.server import create_mcp_server
 
 logger = structlog.get_logger()
 
@@ -110,9 +113,22 @@ def create_application() -> FastAPI:
     app.include_router(health.router, prefix="/api", tags=["Health"])
     app.include_router(upload.router, prefix="/api", tags=["Upload"])
 
-    # GraphQL route
-    graphql_app = GraphQLRouter(schema, path="/graphql")
+    # GraphQL route with context getter for session management
+    graphql_app = GraphQLRouter(schema, path="/graphql", context_getter=get_context)
     app.include_router(graphql_app, prefix="/api")
+
+    # MCP Server routes
+    mcp_settings = get_mcp_settings()
+    if mcp_settings.MCP_ENABLED:
+        # Create MCP router with access to app state
+        # Note: Redis and Celery are accessed from app.state after startup
+        mcp_router = create_mcp_server()
+        app.include_router(mcp_router, prefix=mcp_settings.MCP_BASE_PATH)
+        logger.info(
+            "MCP server enabled",
+            base_path=mcp_settings.MCP_BASE_PATH,
+            version=mcp_settings.MCP_SERVER_VERSION,
+        )
 
     return app
 

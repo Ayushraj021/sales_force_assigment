@@ -54,6 +54,10 @@ class User(Base, UUIDMixin, TimestampMixin):
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
     last_login: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
+    # Password reset
+    password_reset_token: Mapped[str | None] = mapped_column(String(255))
+    password_reset_expires: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
     # Organization relationship
     organization_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("organizations.id")
