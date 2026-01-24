@@ -3,6 +3,7 @@
 from typing import Optional
 from uuid import UUID
 
+import pandas as pd
 import strawberry
 import structlog
 from sqlalchemy import select
@@ -12,6 +13,13 @@ from strawberry.types import Info
 from app.api.graphql.context import get_db_session, get_current_user_from_context
 from app.core.exceptions import NotFoundError, ValidationError
 from app.infrastructure.database.models.model import Model, ModelVersion
+from app.infrastructure.database.models.forecast import Forecast
+from app.infrastructure.database.models.dataset import Dataset
+from app.services.forecast.forecast_service import (
+    ForecastService,
+    ForecastConfig,
+    ModelType,
+)
 
 logger = structlog.get_logger()
 
@@ -102,29 +110,114 @@ class InferenceMutation:
             user_id=str(user.id),
         )
 
-        # Run prediction based on model type
+        # Check for existing completed forecast
+        existing_forecast = await db.execute(
+            select(Forecast).where(
+                Forecast.model_id == model.id,
+                Forecast.status == "completed",
+                Forecast.is_active == True,
+            ).order_by(Forecast.created_at.desc())
+        )
+        completed_forecast = existing_forecast.scalar_one_or_none()
+
         predictions = {}
         contribution_by_channel = None
         confidence_intervals = None
 
-        # Placeholder for actual prediction logic
-        # This would load the model from MLflow and run inference
-        predictions = {
-            "predicted_values": [],
-            "dates": [],
-        }
+        if completed_forecast and completed_forecast.predicted_values:
+            # Return stored forecast data
+            predictions = {
+                "predicted_values": completed_forecast.predicted_values,
+                "dates": completed_forecast.forecast_dates or [],
+            }
+
+            if input.include_confidence_intervals and (completed_forecast.lower_bounds or completed_forecast.upper_bounds):
+                confidence_intervals = {
+                    "lower": completed_forecast.lower_bounds or [],
+                    "upper": completed_forecast.upper_bounds or [],
+                }
+
+            logger.info(
+                "Returning existing forecast",
+                forecast_id=str(completed_forecast.id),
+                model_id=str(model.id),
+            )
+        else:
+            # Try to run forecast synchronously if input data is provided
+            if input.input_data:
+                try:
+                    # Convert input data to DataFrame
+                    data = pd.DataFrame(input.input_data)
+
+                    # Determine target and date columns
+                    target_col = None
+                    date_col = "date"
+                    numeric_cols = data.select_dtypes(include=['number']).columns.tolist()
+                    if numeric_cols:
+                        target_col = numeric_cols[0]
+
+                    possible_date_cols = ["date", "ds", "Date", "DATE", "timestamp"]
+                    for col in possible_date_cols:
+                        if col in data.columns:
+                            date_col = col
+                            break
+
+                    if target_col:
+                        # Map model type to ForecastService model type
+                        model_type_map = {
+                            "prophet": ModelType.PROPHET,
+                            "arima": ModelType.ARIMA,
+                            "ensemble": ModelType.ENSEMBLE,
+                        }
+                        forecast_model_type = model_type_map.get(
+                            model.model_type.lower() if model.model_type else "prophet",
+                            ModelType.PROPHET
+                        )
+
+                        config = ForecastConfig(
+                            model_type=forecast_model_type,
+                            horizon=30,  # Default horizon
+                            confidence_level=0.95,
+                        )
+
+                        service = ForecastService()
+                        job = service.create_forecast(
+                            data=data,
+                            target_col=target_col,
+                            date_col=date_col,
+                            config=config,
+                        )
+
+                        if job.result:
+                            predictions = {
+                                "predicted_values": job.result.get("values", []),
+                                "dates": job.result.get("dates", []),
+                            }
+
+                            if input.include_confidence_intervals:
+                                confidence_intervals = {
+                                    "lower": job.result.get("lower", []),
+                                    "upper": job.result.get("upper", []),
+                                }
+
+                            logger.info(
+                                "Generated synchronous forecast",
+                                model_id=str(model.id),
+                                metrics=job.result.get("metrics"),
+                            )
+                except Exception as e:
+                    logger.error(
+                        "Failed to generate forecast",
+                        model_id=str(model.id),
+                        error=str(e),
+                    )
+                    predictions = {"predicted_values": [], "dates": []}
+            else:
+                predictions = {"predicted_values": [], "dates": []}
 
         if input.include_contributions:
-            contribution_by_channel = {
-                "channel_1": [],
-                "channel_2": [],
-            }
-
-        if input.include_confidence_intervals:
-            confidence_intervals = {
-                "lower": [],
-                "upper": [],
-            }
+            # Placeholder - would need channel contribution data from the model
+            contribution_by_channel = {}
 
         return PredictionResult(
             model_id=model.id,

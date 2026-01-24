@@ -13,6 +13,7 @@ celery_app = Celery(
         "app.workers.tasks.training",
         "app.workers.tasks.optimization",
         "app.workers.tasks.reports",
+        "app.workers.tasks.forecasting",
     ],
 )
 
@@ -33,6 +34,7 @@ celery_app.conf.update(
     task_routes={
         "app.workers.tasks.training.*": {"queue": "ml"},
         "app.workers.tasks.optimization.*": {"queue": "ml"},
+        "app.workers.tasks.forecasting.*": {"queue": "ml"},
         "app.workers.tasks.reports.*": {"queue": "default"},
     },
     # Beat schedule for periodic tasks

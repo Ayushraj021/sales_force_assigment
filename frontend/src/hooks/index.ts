@@ -22,3 +22,47 @@ export type {
   TrainingUpdate,
   DashboardUpdate,
 } from './useWebSocket';
+
+// Reports
+export {
+  useReports,
+  useScheduledReports,
+  useExport,
+  useGenerateReport,
+  useScheduleReport,
+  useCancelScheduledReport,
+  useReportMutations,
+} from './useReports';
+
+export type {
+  ScheduleReportInput,
+  GenerateReportInput,
+} from './useReports';
+
+// Data Connectors
+export {
+  useConnectors,
+  useConnector,
+  useCreateConnector,
+  useUpdateConnector,
+  useTestConnector,
+  useSyncConnector,
+  useDeleteConnector,
+  useConnectorMutations,
+} from './useConnectors';
+
+export type {
+  CreateConnectorInput,
+  UpdateConnectorInput,
+} from './useConnectors';
+
+// Geo Experiments
+export {
+  useGeoExperiments,
+  useGeoExperiment,
+  useCreateGeoExperiment,
+  useRunPowerAnalysis,
+  useAnalyzeGeoExperiment,
+  useGeoExperimentActions,
+  useGeoExperimentMutations,
+} from './useGeoExperiments';
