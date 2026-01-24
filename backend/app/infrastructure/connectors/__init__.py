@@ -42,3 +42,35 @@ try:
     __all__.extend(["BigQueryConnector", "BigQueryConfig"])
 except ImportError:
     pass
+
+try:
+    from .redshift import RedshiftConnector, RedshiftConfig
+    __all__.extend(["RedshiftConnector", "RedshiftConfig"])
+except ImportError:
+    pass
+
+try:
+    from .databricks import DatabricksConnector, DatabricksConfig
+    __all__.extend(["DatabricksConnector", "DatabricksConfig"])
+except ImportError:
+    pass
+
+# CRM Connectors
+try:
+    from .salesforce import SalesforceConnector, SalesforceConfig
+    __all__.extend(["SalesforceConnector", "SalesforceConfig"])
+except ImportError:
+    pass
+
+try:
+    from .hubspot import HubSpotConnector, HubSpotConfig
+    __all__.extend(["HubSpotConnector", "HubSpotConfig"])
+except ImportError:
+    pass
+
+# Analytics Connectors
+try:
+    from .google_analytics import GoogleAnalyticsConnector, GoogleAnalyticsConfig
+    __all__.extend(["GoogleAnalyticsConnector", "GoogleAnalyticsConfig"])
+except ImportError:
+    pass
