@@ -1,0 +1,280 @@
+/**
+ * Theme CSS Variables
+ *
+ * CSS custom properties for theming.
+ * These are applied based on the theme class on :root
+ */
+
+/* Base/Light theme (default) */
+:root,
+:root.light {
+  /* Backgrounds */
+  --background: hsl(210, 40%, 98%);
+  --background-paper: hsl(0, 0%, 100%);
+  --background-subtle: hsl(210, 40%, 96%);
+  --background-muted: hsl(214, 32%, 91%);
+  --background-elevated: hsl(0, 0%, 100%);
+
+  /* Foreground */
+  --foreground: hsl(222, 47%, 11%);
+  --foreground-muted: hsl(215, 16%, 47%);
+  --foreground-subtle: hsl(215, 20%, 65%);
+
+  /* Border */
+  --border: hsl(214, 32%, 91%);
+  --border-muted: hsl(210, 40%, 96%);
+  --border-strong: hsl(213, 27%, 84%);
+
+  /* Card */
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(222, 47%, 11%);
+
+  /* Primary */
+  --primary: hsl(243, 75%, 59%);
+  --primary-hover: hsl(245, 58%, 51%);
+  --primary-active: hsl(244, 55%, 41%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --primary-light: hsl(226, 100%, 94%);
+
+  /* Secondary */
+  --secondary: hsl(271, 81%, 56%);
+  --secondary-hover: hsl(272, 72%, 47%);
+  --secondary-active: hsl(273, 67%, 39%);
+  --secondary-foreground: hsl(0, 0%, 100%);
+  --secondary-light: hsl(269, 100%, 95%);
+
+  /* Accent */
+  --accent: hsl(210, 40%, 96%);
+  --accent-foreground: hsl(222, 47%, 11%);
+
+  /* Destructive */
+  --destructive: hsl(346, 77%, 49%);
+  --destructive-hover: hsl(345, 83%, 41%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --destructive-light: hsl(355, 100%, 94%);
+
+  /* Success */
+  --success: hsl(161, 94%, 30%);
+  --success-light: hsl(152, 81%, 96%);
+  --success-foreground: hsl(0, 0%, 100%);
+
+  /* Warning */
+  --warning: hsl(38, 92%, 50%);
+  --warning-light: hsl(48, 100%, 96%);
+  --warning-foreground: hsl(21, 92%, 14%);
+
+  /* Info */
+  --info: hsl(200, 98%, 39%);
+  --info-light: hsl(204, 100%, 97%);
+  --info-foreground: hsl(0, 0%, 100%);
+
+  /* Muted */
+  --muted: hsl(210, 40%, 96%);
+  --muted-foreground: hsl(215, 16%, 47%);
+
+  /* Popover */
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(222, 47%, 11%);
+
+  /* Ring */
+  --ring: hsl(243, 75%, 59%);
+  --ring-offset: hsl(0, 0%, 100%);
+
+  /* Input */
+  --input: hsl(214, 32%, 91%);
+  --input-focus: hsl(243, 75%, 59%);
+
+  /* Radius */
+  --radius: 0.5rem;
+  --radius-sm: 0.25rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* Chart Colors */
+  --chart-1: hsl(239, 84%, 67%);
+  --chart-2: hsl(271, 91%, 65%);
+  --chart-3: hsl(199, 89%, 48%);
+  --chart-4: hsl(160, 84%, 39%);
+  --chart-5: hsl(38, 92%, 50%);
+  --chart-6: hsl(349, 89%, 60%);
+
+  /* Sidebar */
+  --sidebar-background: hsl(0, 0%, 100%);
+  --sidebar-foreground: hsl(222, 47%, 11%);
+  --sidebar-border: hsl(214, 32%, 91%);
+  --sidebar-accent: hsl(210, 40%, 96%);
+  --sidebar-accent-foreground: hsl(222, 47%, 11%);
+
+  /* Table */
+  --table-header: hsl(210, 40%, 96%);
+  --table-row-hover: hsl(210, 40%, 98%);
+  --table-row-selected: hsl(226, 100%, 97%);
+}
+
+/* Dark theme */
+:root.dark {
+  /* Backgrounds */
+  --background: hsl(229, 84%, 5%);
+  --background-paper: hsl(222, 47%, 11%);
+  --background-subtle: hsl(217, 33%, 17%);
+  --background-muted: hsl(215, 25%, 27%);
+  --background-elevated: hsl(217, 33%, 17%);
+
+  /* Foreground */
+  --foreground: hsl(210, 40%, 98%);
+  --foreground-muted: hsl(215, 20%, 65%);
+  --foreground-subtle: hsl(215, 16%, 47%);
+
+  /* Border */
+  --border: hsl(215, 25%, 27%);
+  --border-muted: hsl(217, 33%, 17%);
+  --border-strong: hsl(215, 19%, 35%);
+
+  /* Card */
+  --card: hsl(222, 47%, 11%);
+  --card-foreground: hsl(210, 40%, 98%);
+
+  /* Primary */
+  --primary: hsl(239, 84%, 67%);
+  --primary-hover: hsl(234, 89%, 74%);
+  --primary-active: hsl(230, 94%, 82%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --primary-light: hsl(244, 47%, 20%);
+
+  /* Secondary */
+  --secondary: hsl(271, 91%, 65%);
+  --secondary-hover: hsl(270, 95%, 75%);
+  --secondary-active: hsl(269, 97%, 85%);
+  --secondary-foreground: hsl(0, 0%, 100%);
+  --secondary-light: hsl(274, 87%, 21%);
+
+  /* Accent */
+  --accent: hsl(217, 33%, 17%);
+  --accent-foreground: hsl(210, 40%, 98%);
+
+  /* Destructive */
+  --destructive: hsl(349, 89%, 60%);
+  --destructive-hover: hsl(351, 95%, 71%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --destructive-light: hsl(343, 88%, 16%);
+
+  /* Success */
+  --success: hsl(158, 64%, 52%);
+  --success-light: hsl(164, 86%, 16%);
+  --success-foreground: hsl(0, 0%, 100%);
+
+  /* Warning */
+  --warning: hsl(43, 96%, 56%);
+  --warning-light: hsl(21, 92%, 14%);
+  --warning-foreground: hsl(21, 92%, 14%);
+
+  /* Info */
+  --info: hsl(198, 93%, 60%);
+  --info-light: hsl(202, 80%, 24%);
+  --info-foreground: hsl(0, 0%, 100%);
+
+  /* Muted */
+  --muted: hsl(217, 33%, 17%);
+  --muted-foreground: hsl(215, 20%, 65%);
+
+  /* Popover */
+  --popover: hsl(222, 47%, 11%);
+  --popover-foreground: hsl(210, 40%, 98%);
+
+  /* Ring */
+  --ring: hsl(234, 89%, 74%);
+  --ring-offset: hsl(229, 84%, 5%);
+
+  /* Input */
+  --input: hsl(215, 25%, 27%);
+  --input-focus: hsl(234, 89%, 74%);
+
+  /* Shadows (subtle in dark mode) */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+
+  /* Chart Colors (brighter for dark mode) */
+  --chart-1: hsl(234, 89%, 74%);
+  --chart-2: hsl(270, 95%, 75%);
+  --chart-3: hsl(198, 93%, 60%);
+  --chart-4: hsl(158, 64%, 52%);
+  --chart-5: hsl(43, 96%, 56%);
+  --chart-6: hsl(351, 95%, 71%);
+
+  /* Sidebar */
+  --sidebar-background: hsl(222, 47%, 11%);
+  --sidebar-foreground: hsl(210, 40%, 98%);
+  --sidebar-border: hsl(215, 25%, 27%);
+  --sidebar-accent: hsl(217, 33%, 17%);
+  --sidebar-accent-foreground: hsl(210, 40%, 98%);
+
+  /* Table */
+  --table-header: hsl(217, 33%, 17%);
+  --table-row-hover: hsl(217, 33%, 17%);
+  --table-row-selected: hsl(244, 47%, 20%);
+}
+
+/* Apply base styles */
+* {
+  border-color: var(--border);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Selection colors */
+::selection {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-subtle);
+  border-radius: var(--radius);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--radius);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--foreground-subtle);
+}
+
+/* Focus visible styles */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
